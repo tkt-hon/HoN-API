@@ -1,3 +1,6 @@
+-- metadata v1.0
+
+
 local _G = getfenv(0)
 local object = _G.object
 

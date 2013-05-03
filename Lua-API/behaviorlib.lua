@@ -1,3 +1,6 @@
+-- behaviorLib v1.0
+
+
 local _G = getfenv(0)
 local object = _G.object
 
@@ -1193,8 +1196,7 @@ behaviorLib.harassUtilityWeight = 1.0
 function behaviorLib.HarassHeroUtility(botBrain)
 	local bDebugEchos = false
 	
-	--if core.unitSelf:GetTypeName() == "Hero_Frosty" then bDebugEchos = true end
-	--if core.unitSelf:GetTypeName() == "Hero_Shaman" then bDebugEchos = true end
+	--if core.unitSelf:GetTypeName() == "Hero_Predator" then bDebugEchos = true end
 		
 	local nUtility = 0
 	local unitTarget = nil
@@ -1343,7 +1345,9 @@ function behaviorLib.HarassHeroUtility(botBrain)
 	behaviorLib.heroTarget = unitTarget
 	
 	if bDebugEchos or botBrain.bDebugUtility and nUtility ~= 0 then
-		BotEcho("RandomAggression: "..tostring(core.bEasyRandomAggression))
+		if core.nDifficulty == core.nEASY_DIFFICULTY then 
+			BotEcho("RandomAggression: "..tostring(core.bEasyRandomAggression)) 
+		end
 		BotEcho(format("  HarassHeroNewUtility: %g", nUtility))
 	end
 
@@ -1708,8 +1712,13 @@ function behaviorLib.PushExecute(botBrain)
 		local itemRoT = core.itemRoT
 		if itemRoT then
 			itemRoT:Update()
+			local tInventory = unitSelf:GetInventory()
 			if itemRoT.bHeroesOnly then
-				bActionTaken = core.OrderItemClamp(botBrain, unitSelf, core.itemRoT)
+				local tRoT = core.InventoryContains(tInventory, itemRoT:GetTypeName())
+				if not core.IsTableEmpty(tRoT) then
+					if bDebugEchos then BotEcho("Turning on RoTeacher") end
+					bActionTaken = core.OrderItemClamp(botBrain, unitSelf, core.itemRoT)
+				end
 			end
 		end
 	end
@@ -1718,6 +1727,7 @@ function behaviorLib.PushExecute(botBrain)
 	if bActionTaken == false then
 		local unitTarget = core.unitEnemyCreepTarget
 		if unitTarget then
+			if bDebugEchos then BotEcho("Attacking creeps") end
 			local nRange = core.GetAbsoluteAttackRangeToUnit(unitSelf, unitTarget)
 			if unitSelf:GetAttackType() == "melee" then
 				--override melee so they don't stand *just* out of range
@@ -1735,6 +1745,7 @@ function behaviorLib.PushExecute(botBrain)
 	if bActionTaken == false then
 		local vecDesiredPos = behaviorLib.PositionSelfLogic(botBrain)
 		if vecDesiredPos then
+			if bDebugEchos then BotEcho("Moving out") end
 			bActionTaken = behaviorLib.MoveExecute(botBrain, vecDesiredPos)
 			
 			if bDebugLines then core.DrawXPosition(vecDesiredPos, 'blue') end

@@ -1,3 +1,9 @@
+-- botbraincore v1.1
+
+--[[ Change Log: 
+(v1.1)	Added ToggleAutoCastItem() and ToggleAutoCastAbility()
+--]]
+
 local _G = getfenv(0)
 local object = _G.object
 
@@ -1321,6 +1327,30 @@ function core.OrderItemPosition(botBrain, unit, item, vecTarget, bInterruptAttac
 	return true
 end
 
+function core.ToggleAutoCastItem(botBrain, item, bInterruptAttacks, bQueueCommand)
+	if object.bRunCommands == false or object.bAbilityCommands == false then
+		return false
+	end
+	
+	if bQueueCommand == nil then
+		bQueueCommand = false
+	end
+	
+	if bInterruptAttacks == nil then
+		bInterruptAttacks = true
+	end
+	
+	if not bInterruptAttacks then
+		local sStatus = core.GetAttackSequenceProgress(unit)
+		if sStatus == "windup" then
+			return true
+		end
+	end
+	
+	botBrain:OrderItem2(item, bQueueCommand)
+	return true
+end
+
 function core.OrderAbility(botBrain, ability, bInterruptAttacks, bQueueCommand)
 	if object.bRunCommands == false or object.bAbilityCommands == false then
 		return false
@@ -1390,6 +1420,30 @@ function core.OrderAbilityEntity(botBrain, ability, unitTarget, bInterruptAttack
 	end
 	
 	botBrain:OrderAbilityEntity(ability, unitTarget.object or unitTarget, bQueueCommand)
+	return true
+end
+
+function core.ToggleAutoCastAbility(botBrain, ability, bInterruptAttacks, bQueueCommand)
+	if object.bRunCommands == false or object.bAbilityCommands == false then
+		return false
+	end
+	
+	if bQueueCommand == nil then
+		bQueueCommand = false
+	end
+	
+	if bInterruptAttacks == nil then
+		bInterruptAttacks = true
+	end
+	
+	if not bInterruptAttacks then
+		local sStatus = core.GetAttackSequenceProgress(unit)
+		if sStatus == "windup" then
+			return true
+		end
+	end
+	
+	botBrain:OrderAbility2(ability, bQueueCommand)
 	return true
 end
 
