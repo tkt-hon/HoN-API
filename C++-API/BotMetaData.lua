@@ -1,0 +1,5 @@
+table BotMetaData.FindPath(vecStartPos, vecEndPos[, funcGetCost, funcGetHeuristic])
+CBotMetaDataNode BotMetaData.GetClosestNode(vecPos)
+node, number BotMetaData.GetClosestNodeOnPath(tPath, vecPos)
+table BotMetaData.RegisterLayer(sPath)
+table BotMetaData.SetActiveLayer(sPath)
